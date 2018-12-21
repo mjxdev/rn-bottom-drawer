@@ -46,7 +46,12 @@ export default class BottomDrawer extends Component{
      * The color of the drawer's bottom padding.
      * Should be the same color as the background color of the content inside. 
      */
-    backgroundColor: PropTypes.string
+    backgroundColor: PropTypes.string,
+
+     /**
+     * set to true to trigger drawer open or close programatically. 
+     */
+    refreshVisibility: propTypes.bool
   }
 
   static defaultProps = {
@@ -54,7 +59,8 @@ export default class BottomDrawer extends Component{
     containerHeight: 0,
     offset: 0,
     startUp: true,
-    backgroundColor: '#ffffff'
+    backgroundColor: '#ffffff',
+    refreshVisibility: false
   }
 
   constructor(props){
@@ -89,6 +95,19 @@ export default class BottomDrawer extends Component{
       onPanResponderMove: this._handlePanResponderMove,
       onPanResponderRelease: this._handlePanResponderRelease
     });
+  }
+
+  // if parent component sets refreshVisibility value to true the drawer will open or close depending on current position
+  // have to set refreshVisibility value to false right after drawer open in parent componenet code
+  UNSAFE_componentWillReceiveProps(nextProps) {
+    if (nextProps.refreshVisibility) { 
+      if (this.state.currentPosition === this.UP_POSITION) {
+        this.transitionTo(this.DOWN_POSITION);
+      }
+      else if (this.state.currentPosition === this.DOWN_POSITION) {
+        this.transitionTo(this.UP_POSITION);
+      }
+    }
   }
 
   render() {
